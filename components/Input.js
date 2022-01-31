@@ -24,7 +24,7 @@ function Input() {
     const [loading, setLoading] = useState(false);
     const fileRefPicker = useRef(null);
     
-    const sendPost = async () => {
+    const sendTweet = async () => {
         if (loading) return;
         setLoading(true);
 
@@ -57,7 +57,16 @@ function Input() {
         setShowEmojis(false);
 
     };
-    const addImageToPost = () => { };
+    const addImageToPost = (e) => { 
+        const reader = new FileReader();
+        if (e.target.files[0]) {
+            reader.readAsDataURL(e.target.files[0]);
+        }
+
+        reader.onload = (readerEvent) => {
+            setSelectedFile(readerEvent.target.result);
+        };
+    };
     const addEmoji = (e) => {
         // get the unicode of the emoji
         let sym = e.unified.split("-");
@@ -75,7 +84,7 @@ function Input() {
 
     return (
       <div
-        className={`border-b border-gray-700 p-3 flex space-x-3 overflow-y-scroll`}
+        className={`border-b border-gray-700 p-3 flex space-x-3 overflow-y-scroll ${loading && "opacity-60"}`}
       >
         <img
           className="h-11 w-11 rounded-full cursor-pointer"
@@ -105,63 +114,67 @@ function Input() {
                 <XIcon className="text-white h-5" />
               </div>
               <img
-                src="{selectedFile}"
+                src={selectedFile}
                 alt="tweet image"
                 className="rounded-2xl max-h-80 object-contain"
               />
             </div>
-          )}
-          <div className="flex items-center justify-between pt-2.5 ">
-            <div className="flex items-center">
-                <div
-                className="icon"
-                onClick={() => fileRefPicker.current.click()}
-                >
-                    <label title="image">            
-                        <PhotographIcon className="h-[22px] text-[#1d9bf0]" />
-                    </label>
-                    <input
-                    type="file"
-                    onChange={addImageToPost}
-                    ref={fileRefPicker}
-                    hidden
-                    />
-                </div>
-                <div className="icon rotate-90">
-                    <label title="Poll">
-                        <ChartBarIcon className="text-[#1d9bf0] h-[22px]" />
-                    </label>       
-                </div>
-                <div className="icon" onClick={() => setShowEmojis(!showEmojis)}>
-                    <label title="emoji">            
-                        <EmojiHappyIcon className="text-[#1d9bf0] h-[22px]" />
-                    </label>
-                </div>
-                <div className="icon">
-                    <label title="Schedule">           
-                        <CalendarIcon className="text-[#1d9bf0] h-[22px]" />
-                    </label>
-              </div>
+            )}
 
-              {showEmojis && (
-                <Picker
-                  onSelect={addEmoji}
-                  style={{
-                    position: "absolute",
-                    marginTop: "465px",
-                    marginLeft: "-40",
-                    maxWidth: "320px",
-                    borderRadius: "20px",
-                  }}
-                  theme="dark"
-                />
-              )}
-            </div>
-                <button className='bg-[#1d9bf0] text-white rounded-full px-4 py-1.5 font-bold
-                cursor-pointer shadow-md hover:bg-[#1a8cd8] disabled:hover:bg-[#1d9bf0]
-                disabled:opacity-50 disabled:cursor-default'
-                disabled={!input.trim() && !selectedFile} onClick={sendPost}>Tweet</button>
-          </div>
+            {!loading && (
+                    
+                <div className="flex items-center justify-between pt-2.5 ">
+                    <div className="flex items-center">
+                        <div
+                        className="icon"
+                        onClick={() => fileRefPicker.current.click()}
+                        >
+                            <label title="image">            
+                                <PhotographIcon className="h-[22px] text-[#1d9bf0]" />
+                            </label>
+                            <input
+                            type="file"
+                            onChange={addImageToPost}
+                            ref={fileRefPicker}
+                            hidden
+                            />
+                        </div>
+                        <div className="icon rotate-90">
+                            <label title="Poll">
+                                <ChartBarIcon className="text-[#1d9bf0] h-[22px]" />
+                            </label>       
+                        </div>
+                        <div className="icon" onClick={() => setShowEmojis(!showEmojis)}>
+                            <label title="emoji">            
+                                <EmojiHappyIcon className="text-[#1d9bf0] h-[22px]" />
+                            </label>
+                        </div>
+                        <div className="icon">
+                            <label title="Schedule">           
+                                <CalendarIcon className="text-[#1d9bf0] h-[22px]" />
+                            </label>
+                    </div>
+
+                    {showEmojis && (
+                        <Picker
+                        onSelect={addEmoji}
+                        style={{
+                            position: "absolute",
+                            marginTop: "465px",
+                            marginLeft: "-40",
+                            maxWidth: "320px",
+                            borderRadius: "20px",
+                        }}
+                        theme="dark"
+                        />
+                    )}
+                    </div>
+                        <button className='bg-[#1d9bf0] text-white rounded-full px-4 py-1.5 font-bold
+                        cursor-pointer shadow-md hover:bg-[#1a8cd8] disabled:hover:bg-[#1d9bf0]
+                        disabled:opacity-50 disabled:cursor-default'
+                        disabled={!input.trim() && !selectedFile} onClick={sendTweet}>Tweet</button>        
+                </div>
+            )} 
         </div>
       </div>
     );
